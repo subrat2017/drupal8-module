@@ -1,0 +1,8 @@
+site_info_form_extension.return_json_response:
+  path: '/page_json/{siteapikey}/{nid}'
+  defaults:
+    _title: 'JSON Response'
+    _controller: '\Drupal\site_info_form_extension\Controller\GetResponse::getData'
+  requirements:
+    node: \d+
+    _permission: 'access content'

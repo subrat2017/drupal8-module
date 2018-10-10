@@ -1,0 +1,8 @@
+name: Basic Site Setting Form Alteration
+type: module
+description: 'Adding a new field in the form.'
+package: Custom
+core: '8.x'
+project: 'drupal'
+dependencies:
+  - serialization

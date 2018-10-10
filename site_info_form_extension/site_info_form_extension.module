@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * The extension module which alter the Basic Site Information Setting form
+ * @form_id system_site_information_settings
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+ /**
+  * Implements hook_help().
+  */
+ function site_info_form_extension_help($route_name, RouteMatchInterface $route_match) {
+   switch ($route_name) {
+     case 'help.page.site_info_form_extension':
+       $output = '';
+       $output .= '<h3>' . t('About') . '</h3>';
+       $output .= '<p>' . t('Adding a new field in the Basic Site Setting Form page.') . '</p>';
+       return $output;
+   }
+ }
+
+ /**
+  * Implements hook_form_FORM_ID_alter().
+  */
+ function site_info_form_extension_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+   $site_config = \Drupal::config('system.site');
+
+   $form['apikey_details'] = [
+     '#type' => 'details',
+     '#title' => t('API Key Details'),
+    //  '#description' => t('Provide API key details.'),
+     '#open' => TRUE,
+     '#weight' => -49,
+   ];
+   $form['apikey_details']['siteapikey'] = [
+     '#type' => 'textfield',
+     '#title' => t('Site API Key'),
+     '#default_value' => (null !== $site_config->get('siteapikey')) ? $site_config->get('siteapikey') : 'No API Key yet',
+    //  '#required' => TRUE,
+   ];
+   $form['actions']['submit']['#value'] = t('Update configuration');
+   array_unshift($form['#submit'], 'site_info_form_extension_form_submit');
+ }
+
+ function site_info_form_extension_form_submit($form, FormStateInterface $form_state) {
+   $site_config = \Drupal::service('config.factory')->getEditable('system.site');
+   $site_config->set('siteapikey', $form_state->getValue('siteapikey'))->save();
+   drupal_set_message(t('The Site API Key value is saved with the value '.$form_state->getValue('siteapikey')), 'status', TRUE);
+ }
